@@ -1,0 +1,346 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-height);
+  transition: var(--transition-ui);
+  background: transparent;
+}
+
+.header--scrolled {
+  background: var(--color-header-bg);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.25);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* Logo */
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 101;
+  transition: opacity var(--transition-base);
+}
+
+.header__logo:hover { opacity: 0.8; }
+
+/* "ALAYAM" with "Since 2002" centred directly underneath it */
+.header__logo-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.header__logo-img {
+  display: block;
+  height: 50px;
+  width: auto;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+}
+
+.header__logo .header__logo-since {
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em; /* balances the trailing letter-spacing so the text is truly centred */
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-gold-bright);
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .header__logo-img { height: 38px; }
+  .header__logo .header__logo-since { font-size: 0.52rem; letter-spacing: 0.2em; text-indent: 0.2em; }
+}
+
+/* Brand title next to the logo (specificity bumped so the Tamil font override never replaces it) */
+.header__logo .header__logo-text {
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em; /* balances the trailing letter-spacing so the title is truly centred */
+  line-height: 1;
+  color: var(--color-gold-bright);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .header__logo .header__logo-text { font-size: 1.25rem; letter-spacing: 0.12em; text-indent: 0.12em; }
+}
+
+@media (max-width: 360px) {
+  .header__logo .header__logo-text { font-size: 1.05rem; letter-spacing: 0.08em; text-indent: 0.08em; }
+}
+
+.header__logo-brand {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-ivory);
+  letter-spacing: 0.02em;
+}
+
+/* Desktop Nav */
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+.header__nav-link {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(245, 240, 232, 0.82);
+  position: relative;
+  padding: var(--space-xs) 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color var(--transition-base);
+}
+
+.header__nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-bronze);
+  transition: width var(--transition-base);
+}
+
+@media (hover: hover) {
+  .header__nav-link:hover { color: var(--color-ivory); }
+  .header__nav-link:hover::after { width: 100%; }
+}
+
+.header__nav-link--active { color: var(--color-ivory); }
+.header__nav-link--active::after { width: 100%; }
+
+/* Language dropdown on the black header */
+.header .header__lang-dropdown.liquid-glass-strong {
+  background: #0D0D0D;
+  border-color: rgba(201, 168, 76, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Right actions */
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+/* Cart */
+.header__cart-btn {
+  position: relative;
+  color: rgba(245, 240, 232, 0.85);
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-base);
+}
+
+.header__cart-btn:hover { color: var(--color-ivory); }
+
+.header__cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--color-bronze);
+  color: var(--color-on-accent);
+  font-size: 0.6rem;
+  font-weight: 700;
+  width: 17px;
+  height: 17px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Language Selector */
+.header__lang {
+  position: relative;
+}
+
+.header__lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(245, 240, 232, 0.9);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: var(--transition-ui);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.header__lang-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-ivory);
+}
+
+.header__lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 140px;
+  z-index: 200;
+  padding: 4px;
+}
+
+.header__lang-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-ui-fast);
+}
+
+.header__lang-option:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-ivory);
+}
+
+.header__lang-option--active {
+  color: var(--color-bronze-light);
+}
+
+.header__lang-check {
+  color: var(--color-bronze-light);
+  font-weight: 600;
+}
+
+/* Mobile Actions */
+.header__actions {
+  display: none;
+  align-items: center;
+  gap: var(--space-md);
+  z-index: 101;
+}
+
+/* Hamburger */
+.header__hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  padding: 4px;
+  width: 28px;
+}
+
+.header__hamburger span {
+  display: block;
+  height: 1.5px;
+  background: var(--color-ivory);
+  border-radius: 2px;
+  transition: var(--transition-ui);
+  transform-origin: center;
+}
+
+.header__hamburger--open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.header__hamburger--open span:nth-child(2) { opacity: 0; }
+.header__hamburger--open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Invisible full-screen layer: any touch outside the menu closes it.
+   z-index -1 keeps it behind the header bar and menu, above the page. */
+.header__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: transparent;
+}
+
+@media (min-width: 1025px) {
+  .header__backdrop { display: none; }
+}
+
+/* Mobile Menu */
+.header__mobile-menu {
+  position: absolute;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  background: var(--color-header-bg);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.25);
+  overflow: hidden;
+}
+
+.header__mobile-nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg);
+  gap: var(--space-xs);
+}
+
+.header__mobile-link {
+  padding: var(--space-md) var(--space-lg);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  letter-spacing: 0.05em;
+  transition: var(--transition-ui-fast);
+}
+
+.header__mobile-link:hover,
+.header__mobile-link--active {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-ivory);
+}
+
+.header__mobile-lang {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  margin-top: var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.header__mobile-lang button {
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: var(--transition-ui-fast);
+}
+
+.header__mobile-lang button.active {
+  background: rgba(201, 168, 76, 0.2);
+  color: var(--color-gold-bright);
+  border-color: rgba(201, 168, 76, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .header__nav { display: none; }
+  .header__right { display: none; }
+  .header__actions { display: flex; }
+}

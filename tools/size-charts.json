@@ -1,0 +1,12 @@
+{
+  "_note": "width/height in cm, shown on the generated size-chart image. EDIT these to the real measurements of each product, then run: python3 tools/make-size-chart.py",
+  "diwali-diya-on-woven-jute-mat":               { "width": 6.5, "height": 3.5 },
+  "festive-terracotta-diya-on-jute-mat":         { "width": 6.5, "height": 3.5 },
+  "mandala-terracotta-diya-on-jute-base":        { "width": 6.5, "height": 3.5 },
+  "rustic-terracotta-bowl-with-floral-motif":    { "width": 6.5, "height": 3.5 },
+  "sunlit-terracotta-diya-on-jute-mat":          { "width": 6.5, "height": 3.5 },
+  "terracotta-diya-on-jute-platform":            { "width": 6.5, "height": 3.5 },
+  "terracotta-diya-on-a-jute-mat":               { "width": 6.5, "height": 3.5 },
+  "terracotta-diya-with-jasmine-and-brass-glow": { "width": 6.5, "height": 3.5 },
+  "terracotta-diya-with-jasmine-and-lantern-glow": { "width": 6.5, "height": 3.5 }
+}

@@ -1,0 +1,518 @@
+/* ============================================
+   WOODEN DOOR INTRO
+   ============================================
+   .door-intro                      fixed fullscreen overlay
+     .door-intro__light-leak        seam light (anticipation)
+     .door-intro__perspective       two sliding panels
+       .door-intro__panel--left/right
+         .door-intro__panel-face    half of the door image
+         .door-intro__panel-shadow  depth shadow while opening
+         .door-intro__nameboard     brand board (right panel)
+     .door-intro__seam              line where the doors meet
+     .door-intro__crackers          firecracker bursts on the doors
+     .door-intro__flash             flash when the doors unlatch
+   ============================================ */
+
+/* ── Root overlay ── */
+.door-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  cursor: default;
+  touch-action: none; /* no double-tap zoom while the intro plays */
+  /* Shared slide timing so the cracks stay locked to the door edges */
+  --door-slide-duration: 3s;
+  --door-slide-ease: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Once the doors start opening the overlay must never block touches,
+   so the site underneath is usable immediately */
+.door-intro--passthrough {
+  pointer-events: none;
+  touch-action: auto;
+}
+
+/* ── Light leak at center seam ── */
+.door-intro__light-leak {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 180, 60, 0.5) 15%,
+    rgba(255, 200, 80, 0.8) 50%,
+    rgba(255, 180, 60, 0.5) 85%,
+    transparent 100%
+  );
+  z-index: 12;
+  opacity: 0;
+  filter: blur(2px);
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.door-intro__light-leak--visible {
+  opacity: 1;
+}
+
+/* ── Center seam (dark line where doors meet) ── */
+.door-intro__seam {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 100%;
+  z-index: 13;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(25, 15, 6, 0.6) 50%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+  transition: opacity 0.6s ease;
+}
+
+.door-intro__seam--hidden {
+  opacity: 0;
+}
+
+/* ─────────────────────────────────────────────
+   PANEL CONTAINER
+   ───────────────────────────────────────────── */
+.door-intro__perspective {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  z-index: 10;
+}
+
+/* ─────────────────────────────────────────────
+   DOOR PANELS — SLIDING
+   Each panel is 50% width and slides horizontally
+   off its own side of the screen.
+   ───────────────────────────────────────────── */
+.door-intro__panel {
+  flex: 0 0 50%;
+  position: relative;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  /* Smooth ease-in-out glide */
+  transition: transform var(--door-slide-duration) var(--door-slide-ease);
+}
+
+/* Open states: left slides to the left, right slides to the right */
+.door-intro__panel--left.door-intro__panel--open {
+  transform: translate3d(-100%, 0, 0);
+}
+
+.door-intro__panel--right.door-intro__panel--open {
+  transform: translate3d(100%, 0, 0);
+}
+
+/* ─────────────────────────────────────────────
+   DOOR FACE
+   wooden-door.webp is already colour-graded (antique gold, matching the
+   site's gold accent), so no runtime filter is needed.
+   ───────────────────────────────────────────── */
+.door-intro__panel-face {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/wooden-door.webp');
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+}
+
+/* Left panel: show the left half of the image */
+.door-intro__panel-face--left {
+  background-position: left center;
+}
+
+/* Right panel: show the right half of the image */
+.door-intro__panel-face--right {
+  background-position: right center;
+}
+
+/* ── Dark shading overlay ──
+   Edge darkening plus a warm wash. Colours are already in the graded
+   (lifted-black) palette of the door image, so no runtime filter or
+   blend mode is needed. */
+.door-intro__panel-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 20, 19, 0.6) 0%,
+      rgba(20, 20, 19, 0.192) 20%,
+      rgba(20, 20, 19, 0.095) 50%,
+      rgba(20, 20, 19, 0.192) 80%,
+      rgba(20, 20, 19, 0.7) 100%
+    ),
+    linear-gradient(
+      rgba(20, 14, 5, 0.1),
+      rgba(20, 14, 5, 0.18)
+    );
+}
+
+/* Left panel vignette: softer at the seam, darker at the outer edge */
+.door-intro__panel-face--left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 100% 50%,
+    rgba(153, 125, 76, 0.08) 0%,
+    rgba(124, 108, 82, 0.05) 30%,
+    rgba(20, 20, 19, 0.35) 70%,
+    rgba(20, 20, 19, 0.65) 100%
+  );
+}
+
+/* Right panel vignette: softer at the seam, darker at the outer edge */
+.door-intro__panel-face--right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 0% 50%,
+    rgba(153, 125, 76, 0.08) 0%,
+    rgba(124, 108, 82, 0.05) 30%,
+    rgba(20, 20, 19, 0.35) 70%,
+    rgba(20, 20, 19, 0.65) 100%
+  );
+}
+
+/* ── Dynamic shadow on panel faces during rotation ── */
+.door-intro__panel-shadow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.45) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+
+/* When doors start opening, add depth shadow */
+.door-intro__panel--open .door-intro__panel-shadow {
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────
+   NAMING BOARD — attached to right door panel
+   Positioned in the bottom-right area of the right panel.
+   Slides with the door since it's a child element.
+   ───────────────────────────────────────────── */
+.door-intro__nameboard {
+  position: absolute;
+  bottom: 12%;
+  right: 12%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.door-intro__nameboard-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(28, 24, 14, 0.94) 50%,
+    rgba(10, 10, 10, 0.92) 100%
+  );
+  border: 1.5px solid rgba(201, 168, 76, 0.6);
+  border-radius: 4px;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(176, 141, 87, 0.08);
+}
+
+.door-intro__nameboard-logo {
+  display: block;
+  height: clamp(70px, 13vw, 130px);
+  width: auto;
+}
+
+.door-intro__nameboard-title {
+  font-family: var(--font-heading, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+  font-weight: 600;
+  color: rgba(212, 168, 76, 0.85);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.door-intro__nameboard-subtitle {
+  font-size: clamp(0.5rem, 0.9vw, 0.65rem);
+  color: rgba(245, 240, 232, 0.35);
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────
+   DOOR CRACKERS — small firecracker bursts
+   Two half-width layers slide with the same timing
+   as the door panels, so each burst stays stuck to
+   its spot on the door while it pops.
+   ───────────────────────────────────────────── */
+.door-intro__crackers {
+  position: absolute;
+  inset: 0;
+  z-index: 14;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.door-intro__crackers--active {
+  opacity: 1;
+}
+
+.door-intro__cracker-half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  transition: transform var(--door-slide-duration) var(--door-slide-ease);
+}
+
+.door-intro__cracker-half--left {
+  left: 0;
+}
+
+.door-intro__cracker-half--right {
+  left: 50%;
+}
+
+.door-intro__cracker-half--left.door-intro__cracker-half--open {
+  transform: translate3d(-100%, 0, 0);
+}
+
+.door-intro__cracker-half--right.door-intro__cracker-half--open {
+  transform: translate3d(100%, 0, 0);
+}
+
+/* A single burst — zero-size anchor point on the door */
+.door-intro__cracker {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Bright pop at the moment of the burst */
+.door-intro__cracker-flash {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--cracker-size);
+  height: var(--cracker-size);
+  margin: calc(var(--cracker-size) / -2) 0 0 calc(var(--cracker-size) / -2);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #ffffff 0%,
+    var(--cracker-color) 35%,
+    transparent 70%
+  );
+  box-shadow: 0 0 18px 4px var(--cracker-color);
+  opacity: 0;
+}
+
+/* Gravity wrapper — sparks drift down as they fly out */
+.door-intro__cracker-fall {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* Individual spark streak, rotated to its flight angle */
+.door-intro__cracker-spark {
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 9px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to right, transparent, var(--spark-color));
+  box-shadow: 0 0 4px var(--spark-color);
+  transform-origin: 0 50%;
+  opacity: 0;
+}
+
+.door-intro__crackers--active .door-intro__cracker-flash {
+  animation: door-cracker-flash 0.45s ease-out var(--cracker-delay) both;
+}
+
+.door-intro__crackers--active .door-intro__cracker-fall {
+  animation: door-cracker-fall var(--cracker-duration)
+    cubic-bezier(0.55, 0, 1, 0.45) var(--cracker-delay) both;
+}
+
+.door-intro__crackers--active .door-intro__cracker-spark {
+  animation:
+    door-cracker-fly var(--spark-life) cubic-bezier(0.12, 0.8, 0.3, 1)
+      var(--cracker-delay) both,
+    door-cracker-twinkle var(--spark-life) linear var(--cracker-delay) both;
+}
+
+@keyframes door-cracker-flash {
+  0%   { opacity: 0; transform: scale(0.2); }
+  25%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+@keyframes door-cracker-fall {
+  from { transform: translateY(0); }
+  to   { transform: translateY(16px); }
+}
+
+@keyframes door-cracker-fly {
+  from { transform: rotate(var(--spark-angle)) translateX(0) scaleX(0.4); }
+  to   { transform: rotate(var(--spark-angle)) translateX(var(--spark-dist)) scaleX(0.7); }
+}
+
+/* Burst on, then crackle (blink) before dying out */
+@keyframes door-cracker-twinkle {
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }
+  55%  { opacity: 1; }
+  63%  { opacity: 0.3; }
+  70%  { opacity: 1; }
+  78%  { opacity: 0.2; }
+  86%  { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+/* ── Seam flash — burst of light as the doors unlatch ── */
+.door-intro__flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vmin;
+  height: 120vh;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 246, 216, 0.85) 0%,
+    rgba(255, 190, 90, 0.35) 25%,
+    transparent 65%
+  );
+  z-index: 15;
+  pointer-events: none;
+  opacity: 0;
+  animation: door-seam-flash 0.9s ease-out forwards;
+}
+
+@keyframes door-seam-flash {
+  0%   { opacity: 0;   transform: translate(-50%, -50%) scaleX(0.2); }
+  15%  { opacity: 1;   transform: translate(-50%, -50%) scaleX(1); }
+  30%  { opacity: 0.4; }
+  40%  { opacity: 0.8; }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scaleX(1.4); }
+}
+
+/* ══════════════════════════════════════════
+   REDUCED MOTION — respect user preference
+   ══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .door-intro__panel,
+  .door-intro__cracker-half {
+    transition: none !important;
+  }
+
+  .door-intro__crackers,
+  .door-intro__flash {
+    animation: none !important;
+    display: none;
+  }
+
+  .door-intro__light-leak {
+    transition-duration: 0.01s !important;
+  }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ══════════════════════════════════════════ */
+
+/* ── Laptop: 1280–1440 ── */
+@media (max-width: 1440px) {
+  .door-intro__nameboard {
+    bottom: 10%;
+    right: 10%;
+  }
+}
+
+/* ── Tablet landscape ── */
+@media (max-width: 1024px) {
+  .door-intro__nameboard {
+    bottom: 8%;
+    right: 8%;
+  }
+}
+
+/* ── Tablet portrait / large mobile ── */
+@media (max-width: 768px) {
+  .door-intro__nameboard {
+    bottom: 10%;
+    right: 6%;
+  }
+
+  .door-intro__nameboard-inner {
+    padding: 8px 16px;
+  }
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .door-intro__nameboard {
+    bottom: 8%;
+    right: 5%;
+  }
+
+  .door-intro__nameboard-inner {
+    padding: 6px 12px;
+    gap: 2px;
+  }
+}
+
+/* ── Very small mobile ── */
+@media (max-width: 375px) {
+  .door-intro__nameboard-inner {
+    padding: 5px 10px;
+  }
+}
+
+/* ══════════════════════════════════════════
+   SHORT VIEWPORTS (landscape mobile/laptop)
+   ══════════════════════════════════════════ */
+@media (max-height: 600px) {
+  .door-intro__nameboard {
+    bottom: 6%;
+  }
+}

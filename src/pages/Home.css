@@ -1,0 +1,990 @@
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(var(--header-height) + var(--space-2xl));
+  padding-bottom: var(--space-xl);
+  background: transparent; /* the glow shader layer shows through */
+}
+
+/* Temple-altar photo background (desktop uses the wide image, phones a lighter copy) */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #0b0a07;
+  background-image:
+    linear-gradient(180deg, rgba(8, 7, 5, 0.55) 0%, rgba(8, 7, 5, 0.15) 35%, rgba(8, 7, 5, 0.55) 100%),
+    url('/images/hero-bg.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Open template style glowing background orb */
+.hero__ambient-glow {
+  position: absolute;
+  top: 10%;
+  left: 27%;
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, rgba(232, 168, 56, 0.15) 0%, rgba(201, 168, 76, 0.05) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 6s ease-in-out infinite;
+  pointer-events: none;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+/* Grid background */
+.hero__grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
+  mask-image: radial-gradient(ellipse at center 20%, black 10%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center 20%, black 10%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero__inner {
+  display: grid;
+  /* two equal halves; minmax(0, …) stops the 3D canvas size from stretching its column */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3xl);
+  position: relative;
+  z-index: 2;
+}
+
+/* Festival crackers: canvas sits between the glow (z 0) and the lamp / text (z 2-3) */
+.hero__fireworks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Left half — 3D lamp */
+.hero__model {
+  width: 100%;
+  height: clamp(420px, 72vh, 680px);
+  position: relative;
+  margin-left: -80px;
+  /* Shift the entire model container to the left */
+  z-index: 3; /* stay above the (blurred) text while the lamp is centred */
+}
+
+/* The part of the model that actually moves during the door intro */
+.hero__model-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  /* the flame glow fades out softly instead of being cut by the canvas edge */
+  -webkit-mask-image: linear-gradient(to right, #000 86%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 86%, transparent 100%);
+}
+
+/* ===== DOOR INTRO — lamp centred, rest of the page blurred =====
+   body.intro-lamp-center  : doors still opening → everything but the lamp is blurred
+   body.intro-lamp-release : doors fully open    → blur fades out while the lamp glides home */
+body.intro-lamp-center .header,
+body.intro-lamp-center .hero__ambient-glow,
+body.intro-lamp-center .hero__grid-bg,
+body.intro-lamp-center .hero__text {
+  filter: blur(14px);
+}
+
+body.intro-lamp-release .header,
+body.intro-lamp-release .hero__ambient-glow,
+body.intro-lamp-release .hero__grid-bg,
+body.intro-lamp-release .hero__text {
+  animation: intro-unblur 1.2s ease both;
+}
+
+@keyframes intro-unblur {
+  from { filter: blur(14px); }
+  to   { filter: blur(0); }
+}
+
+/* Right half — content */
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--space-lg);
+  max-width: 560px;
+  justify-self: start;
+}
+
+.hero__switch {
+  position: absolute;
+  right: 0%;
+  /* pushed further to the right edge */
+  bottom: 60px;
+  z-index: 3;
+  width: 56px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  background: #141414;
+  border: 1px solid rgba(201, 168, 76, 0.8);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(17, 17, 17, 0.25);
+  transition: opacity 0.6s ease 0.8s, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero__switch--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
+}
+
+.hero__switch.is-on {
+  background: linear-gradient(135deg, var(--color-amber) 0%, var(--color-bronze) 100%);
+  border-color: var(--color-gold);
+  box-shadow: inset 0 2px 5px rgba(90, 50, 8, 0.35), 0 0 22px rgba(232, 168, 56, 0.55), 0 4px 14px rgba(17, 17, 17, 0.25);
+}
+
+.hero__switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #c9a84c, #8a6d3b);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: left 0.3s ease, background 0.3s ease;
+}
+
+.hero__switch.is-on .hero__switch-knob {
+  left: calc(100% - 24px);
+  background: linear-gradient(145deg, #FFFFFF, #F5F0E8);
+}
+
+.hero__switch-label {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-gold-light);
+  transition: color 0.3s ease, left 0.3s ease, right 0.3s ease;
+}
+
+.hero__switch.is-on .hero__switch-label {
+  right: auto;
+  left: 8px;
+  color: var(--color-on-accent);
+}
+
+.hero__switch:focus-visible {
+  outline: 2px solid var(--color-gold-bright);
+  outline-offset: 3px;
+}
+
+.diya-fallback {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 55%, rgba(255, 153, 68, 0.35), transparent 60%);
+}
+
+.hero__title {
+  font-size: clamp(2.6rem, 4.8vw, 4.6rem);
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--color-ivory);
+  letter-spacing: -0.03em;
+  overflow-wrap: break-word;
+}
+
+.hero__title-accent {
+  background: linear-gradient(to right, var(--color-bronze) 0%, var(--color-gold-bright) 50%, var(--color-amber) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero__description {
+  font-size: 1.15rem;
+  max-width: 600px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  font-weight: 300;
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+/* ===== FEATURED PRODUCT ===== */
+.featured-product {
+  background: transparent; /* the glow shader layer shows through */
+}
+
+.featured-product__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 480px);
+  justify-content: center;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.featured-product__image-wrap {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.featured-product__image-glow {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, rgba(232, 168, 56, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.featured-product__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  position: relative;
+  z-index: 1;
+}
+
+.featured-product__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.featured-product__info .badge {
+  align-self: flex-start;
+}
+
+.featured-product__name {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  color: var(--color-ivory);
+}
+
+.featured-product__desc {
+  color: var(--color-text-secondary);
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.featured-product__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.featured-product__qty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.featured-product__qty label {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.featured-product__buttons {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.featured-product__view-link {
+  font-size: 0.85rem;
+  color: var(--color-gold-bright);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-fast);
+}
+
+.featured-product__view-link:hover {
+  color: var(--color-gold-bright);
+}
+
+/* ===== HERITAGE SECTION ===== */
+.heritage-section {
+  scroll-margin-top: var(--header-height);
+  background: transparent; /* the glow shader layer shows through */
+  overflow: hidden;
+}
+
+.heritage-section__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(232, 168, 56, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.heritage-section__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-2xl);
+  align-items: center;
+}
+
+.heritage-section__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.heritage-section__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--color-ivory);
+}
+
+.heritage-section__text {
+  color: var(--color-text-secondary);
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 550px;
+}
+
+.heritage-section__lamp-icon {
+  position: relative;
+}
+
+.heritage-section__lamp-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(255, 153, 68, 0.14) 0%, transparent 60%);
+  border-radius: 50%;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+.heritage-section__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.heritage-section__particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(232, 168, 56, 0.3);
+  border-radius: 50%;
+  left: var(--x);
+  bottom: -10px;
+  animation: particleFloat var(--duration) var(--delay) linear infinite;
+}
+
+/* Tagline row under the heritage text (lamp + Tamil heritage lines) */
+.heritage-section__tagline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.heritage-section__tagline .heritage-section__lamp-icon {
+  flex: 0 0 72px;
+  height: 72px;
+}
+
+.heritage-section__tagline-title {
+  font-size: 1.3rem;
+  color: var(--color-ivory);
+  font-weight: 600;
+}
+
+.heritage-section__tagline-text {
+  color: var(--color-gold-bright);
+  font-weight: 300;
+  font-size: 0.95rem;
+}
+
+/* About card (right column of the heritage section) */
+.heritage-about {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.heritage-about__title {
+  font-size: 1.5rem;
+  color: var(--color-ivory);
+  font-weight: 600;
+}
+
+.heritage-about__text {
+  color: var(--color-text-secondary);
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.heritage-about__list {
+  display: grid;
+  gap: var(--space-sm);
+  font-size: 0.92rem;
+  color: var(--color-text-secondary);
+}
+
+.heritage-about__list li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+
+.heritage-about__list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-gold-bright);
+  font-weight: 700;
+}
+
+/* ===== CATEGORIES ===== */
+.category-section {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.category-section__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+
+.category-section__grid > div {
+  display: flex;
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  transition: var(--transition-ui);
+}
+
+@media (hover: hover) {
+  .category-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-gold);
+  }
+}
+
+.category-card__img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+}
+
+.category-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  flex: 1;
+}
+
+.category-card__title {
+  font-size: 1.15rem;
+  color: var(--color-ivory);
+}
+
+.category-card__desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 300;
+  line-height: 1.55;
+}
+
+.category-card__link {
+  margin-top: auto;
+  padding-top: var(--space-sm);
+  font-size: 0.85rem;
+  color: var(--color-gold-bright);
+  letter-spacing: 0.04em;
+}
+
+/* ===== WHY ALAYAM ===== */
+.why-alayam {
+  background: transparent; /* the glow shader layer shows through */
+}
+
+.why-alayam__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.why-alayam__card {
+  padding: var(--space-lg);
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-md);
+  transition: var(--transition-ui);
+}
+
+@media (hover: hover) {
+  .why-alayam__card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-gold);
+  }
+}
+
+.why-alayam__icon {
+  flex: 0 0 auto;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--color-gold-bright);
+}
+
+.why-alayam__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.why-alayam__title {
+  font-size: 1.05rem;
+  color: var(--color-ivory);
+}
+
+.why-alayam__desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* ===== OCCASION SECTION ===== */
+.occasion-section {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.occasion-section__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: var(--space-2xl);
+  align-items: center;
+}
+
+.occasion-section__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.occasion-section__intro .section-title {
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.occasion-section__intro .divider {
+  margin: 0;
+}
+
+.occasion-section__text {
+  color: var(--color-text-muted);
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.occasion-section__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.occasion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-lg) var(--space-sm);
+  gap: var(--space-sm);
+  transition: var(--transition-ui);
+}
+
+@media (hover: hover) {
+  .occasion-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-gold);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.occasion-card__icon {
+  font-size: 1.8rem;
+}
+
+.occasion-card__name {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* ===== FINAL CTA ===== */
+.final-cta {
+  background: transparent; /* the glow shader layer shows through */
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.final-cta__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(201, 168, 76, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.final-cta__inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.final-cta__label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  color: var(--color-gold-bright);
+}
+
+.final-cta__title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--color-ivory);
+}
+
+.final-cta__desc {
+  color: var(--color-text-secondary);
+  font-weight: 300;
+  max-width: 620px;
+}
+
+.final-cta__actions {
+  margin-top: var(--space-md);
+}
+
+/* ===== LOCAL SEO / FAQ ===== */
+.local-seo__inner {
+  max-width: 1040px;
+}
+
+.local-seo__intro {
+  max-width: 760px;
+  text-align: center;
+}
+
+.local-seo__faq-title {
+  margin: var(--space-lg) 0 var(--space-md);
+  font-size: 1.3rem;
+  color: var(--color-ivory);
+  text-align: center;
+}
+
+.local-seo__faq {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm) var(--space-md);
+  align-items: start;
+}
+
+.local-seo__item {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.local-seo__item[open] {
+  border-color: var(--color-border-gold);
+}
+
+.local-seo__item summary {
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: var(--space-xs) 0;
+}
+
+.local-seo__item p {
+  margin: var(--space-xs) 0 var(--space-xs);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+/* ===== COMPACT SECTION SPACING (home only) ===== */
+.home {
+  --home-section-padding: 2.75rem;
+}
+
+.home .section {
+  padding: var(--home-section-padding) 0;
+}
+
+.home section[id] {
+  scroll-margin-top: calc(var(--header-height) + 8px);
+}
+
+.home .section-subtitle {
+  margin-bottom: var(--space-lg);
+  max-width: 760px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero__inner {
+    gap: var(--space-xl);
+  }
+
+  .hero__model {
+    height: clamp(380px, 60vh, 560px);
+  }
+
+  .why-alayam__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .why-alayam__card {
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .why-alayam__desc {
+    font-size: 0.8rem;
+  }
+
+  .category-card__img {
+    height: 100px;
+  }
+
+  .heritage-about__text,
+  .heritage-section__text {
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .occasion-section__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .hero__bg {
+    /* keep the lamps / flowers visible on tall phone screens and darken a bit more for text legibility */
+    background-image:
+      linear-gradient(180deg, rgba(8, 7, 5, 0.7) 0%, rgba(8, 7, 5, 0.35) 40%, rgba(8, 7, 5, 0.75) 100%),
+      url('/images/hero-bg-mobile.webp');
+    background-position: 30% center;
+  }
+
+  .hero__grid-bg {
+    display: none;
+  }
+
+  .hero {
+    padding-top: calc(var(--header-height) + var(--space-2xl));
+  }
+
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-lg);
+    padding: var(--space-xl) 0;
+  }
+
+  .hero__model {
+    height: 340px;
+    margin-left: 0;
+  }
+
+  .hero__switch {
+    right: var(--space-md);
+    bottom: var(--space-md);
+  }
+
+  .hero__text {
+    align-items: center;
+    text-align: center;
+    justify-self: center;
+    max-width: 100%;
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+  }
+
+  .hero__description {
+    max-width: 100%;
+    font-size: 1rem;
+  }
+
+  .hero__actions {
+    justify-content: center;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .hero__ambient-glow {
+    top: 5%;
+    left: 50%;
+    width: 350px;
+    height: 350px;
+  }
+
+  .featured-product__inner {
+    grid-template-columns: minmax(0, 320px);
+    gap: var(--space-2xl);
+  }
+
+  .home {
+    --home-section-padding: 1.75rem;
+  }
+
+  .heritage-section__text {
+    max-width: 100%;
+  }
+
+  .local-seo__faq {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .occasion-section__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .occasion-card {
+    padding: var(--space-md) var(--space-xs);
+  }
+
+  .heritage-about {
+    padding: var(--space-lg);
+  }
+
+  .hero__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero__cta,
+  .hero__cta-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Phones: category and "why" cards become swipe rows (all content kept, far less height) */
+@media (max-width: 700px) {
+  .heritage-section__inner,
+  .occasion-section__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .category-section__grid,
+  .why-alayam__grid {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0 calc(-1 * var(--space-md));
+    padding: 0 var(--space-md) var(--space-sm);
+    scrollbar-width: none;
+  }
+
+  .category-section__grid::-webkit-scrollbar,
+  .why-alayam__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-section__grid > div {
+    flex: 0 0 68%;
+    scroll-snap-align: start;
+  }
+
+  .why-alayam__card {
+    flex: 0 0 76%;
+    flex-direction: row;
+    scroll-snap-align: start;
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .category-card__img {
+    height: 110px;
+  }
+
+  .category-card__body {
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+  }
+
+  .heritage-about {
+    padding: var(--space-md);
+  }
+
+  .heritage-section__content,
+  .heritage-about {
+    gap: var(--space-sm);
+  }
+
+  .featured-product__inner {
+    gap: var(--space-lg);
+    grid-template-columns: minmax(0, 250px);
+  }
+
+  .occasion-section__intro {
+    gap: var(--space-sm);
+  }
+
+  .local-seo__faq-title {
+    margin-top: var(--space-md);
+  }
+}

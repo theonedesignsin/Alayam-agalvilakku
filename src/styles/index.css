@@ -1,0 +1,579 @@
+/* ============================================
+   ALAYAM — GLOBAL STYLES & DESIGN SYSTEM
+   Black Theme — white & gold text
+   ============================================ */
+
+/* --- CSS Custom Properties (Design Tokens) --- */
+:root {
+  /* Black surfaces */
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0D0D0D;
+  --color-bg-tertiary: #1A1A1A;
+  --color-bg-card: #141414;
+  --color-header-bg: rgba(0, 0, 0, 0.96);
+  --color-on-accent: #111111; /* black text used on gold buttons / badges */
+  --color-black: #000000;
+
+  /* Warm accents */
+  --color-ivory: #FFFFFF; /* main light text (white) */
+  --color-ivory-light: #FFFFFF;
+  --color-bronze: #B08D57;
+  --color-bronze-light: #C9A84C;
+  --color-bronze-dark: #8A6D3B;
+  --color-gold: #C9A84C;
+  --color-gold-bright: #E0C26A; /* bright gold: gold text on black */
+  --color-gold-light: #E0C26A; /* bright gold: for use on black surfaces */
+  --color-amber: #E8A838;
+
+  /* Semantic colors */
+  --color-bg: var(--color-bg-primary);
+  --color-text-primary: var(--color-ivory);
+  --color-text-secondary: rgba(255, 255, 255, 0.86);
+  --color-text-muted: rgba(255, 255, 255, 0.72);
+  --color-border-light: rgba(255, 255, 255, 0.14);
+  --color-border-gold: rgba(201, 168, 76, 0.35);
+
+  /* Typography */
+  --font-heading: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-tamil-heading: 'Noto Serif Tamil', 'Noto Sans Tamil', serif;
+  --font-tamil-body: 'Noto Sans Tamil', 'Noto Serif Tamil', sans-serif;
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 50%;
+
+  /* Transitions (explicit properties instead of `all`, so layout never animates) */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease);
+  --transition-base: 300ms var(--ease);
+  --transition-ui:
+    background-color 300ms var(--ease), border-color 300ms var(--ease), color 300ms var(--ease),
+    box-shadow 300ms var(--ease), opacity 300ms var(--ease), transform 300ms var(--ease);
+  --transition-ui-fast:
+    background-color 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease),
+    box-shadow 150ms var(--ease), opacity 150ms var(--ease), transform 150ms var(--ease);
+
+  /* Layout */
+  --section-padding: 5.5rem; /* vertical padding of every home section */
+  --max-width: 1280px;
+  --header-height: 80px;
+}
+
+/* --- Tamil Language Font Overrides --- */
+[data-lang="ta"] body {
+  font-family: var(--font-tamil-body);
+}
+
+[data-lang="ta"] h1,
+[data-lang="ta"] h2,
+[data-lang="ta"] h3,
+[data-lang="ta"] h4,
+[data-lang="ta"] h5,
+[data-lang="ta"] h6 {
+  font-family: var(--font-tamil-heading);
+}
+
+[data-lang="ta"] button,
+[data-lang="ta"] input,
+[data-lang="ta"] textarea,
+[data-lang="ta"] select,
+[data-lang="ta"] .btn,
+[data-lang="ta"] .badge,
+[data-lang="ta"] .product-card__name,
+[data-lang="ta"] .product-card__desc,
+[data-lang="ta"] .product-detail__name,
+[data-lang="ta"] .product-detail__description,
+[data-lang="ta"] .cart-item__name,
+[data-lang="ta"] .checkout__item-name,
+[data-lang="ta"] .header__nav-link,
+[data-lang="ta"] .header__mobile-link,
+[data-lang="ta"] .footer__tagline,
+[data-lang="ta"] .footer__craft,
+[data-lang="ta"] p,
+[data-lang="ta"] span,
+[data-lang="ta"] label,
+[data-lang="ta"] a {
+  font-family: var(--font-tamil-body);
+}
+
+[data-lang="ta"] .hero__title,
+[data-lang="ta"] .section-title {
+  font-family: var(--font-tamil-heading);
+}
+
+[data-lang="ta"] .hero__title {
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* --- Reset & Base --- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable; /* reserve scrollbar space so the page never shifts when scrolling is locked / unlocked */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
+h3 { font-size: clamp(1.3rem, 2.5vw, 1.75rem); }
+h4 { font-size: 1.25rem; }
+
+p {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--transition-fast);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Remove the blue tap flash / text selection on touch devices */
+a,
+button,
+.btn,
+.product-card,
+.cart-item,
+[role="button"],
+label {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+/* keep typing/selecting working inside form fields */
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+a:focus,
+button:focus,
+.product-card:focus {
+  outline: none;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  transition: var(--transition-ui);
+}
+
+input, textarea, select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* --- Utility Classes --- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.section {
+  padding: var(--section-padding) 0;
+  position: relative;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  font-weight: 300;
+  margin-bottom: var(--space-2xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   LIQUID GLASS
+   ============================================ */
+.liquid-glass {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.5) 30%,
+    rgba(201, 168, 76, 0.8) 50%,
+    rgba(201, 168, 76, 0.5) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.liquid-glass-strong {
+  background: #0D0D0D;
+  border: 1px solid rgba(201, 168, 76, 0.55);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-strong::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.6) 30%,
+    rgba(201, 168, 76, 0.9) 50%,
+    rgba(201, 168, 76, 0.6) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-family: var(--font-body);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  transition: var(--transition-ui);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-bronze) 0%, var(--color-gold) 100%);
+  color: var(--color-on-accent);
+  border: 1px solid rgba(138, 109, 59, 0.55);
+  box-shadow: 0 4px 16px rgba(176, 141, 87, 0.3);
+}
+
+@media (hover: hover) {
+  .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(176, 141, 87, 0.45);
+  }
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(176, 141, 87, 0.25);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-ivory);
+  border: 1px solid var(--color-ivory);
+}
+
+@media (hover: hover) {
+  .btn-secondary:hover {
+    background: var(--color-ivory);
+    color: var(--color-bg-primary);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-secondary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-glass {
+  background: rgba(128, 128, 128, 0.12);
+  background: color-mix(in srgb, var(--color-ivory) 8%, transparent);
+  color: var(--color-ivory);
+  border: 1px solid rgba(201, 168, 76, 0.45);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+@media (hover: hover) {
+  .btn-glass:hover {
+    background: rgba(201, 168, 76, 0.14);
+    border-color: rgba(201, 168, 76, 0.5);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-sm {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8rem;
+}
+
+.btn-lg {
+  padding: 1rem 2.5rem;
+  font-size: 0.9rem;
+  border-radius: var(--radius-lg);
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-style: normal;
+}
+
+.badge-gold {
+  background: rgba(201, 168, 76, 0.16);
+  color: var(--color-gold-bright);
+  border: 1px solid rgba(201, 168, 76, 0.5);
+}
+
+/* ============================================
+   FORM INPUTS
+   ============================================ */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-md);
+  background: #141414;
+  color: #FFFFFF;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: var(--color-bronze);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.25);
+  background: #1A1A1A;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.input-group select option {
+  background: #141414;
+  color: #FFFFFF;
+}
+
+.input-group--error input,
+.input-group--error textarea,
+.input-group--error select {
+  border-color: #ff8a7a;
+}
+
+.input-error {
+  color: #ffb4a8;
+  font-size: 0.8rem;
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+.divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-bronze), var(--color-gold));
+  border-radius: 1px;
+  margin: var(--space-md) auto;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-bronze-dark);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-bronze);
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 64px;
+  }
+
+  .container {
+    padding: 0 var(--space-md);
+  }
+
+  :root {
+    --section-padding: 3rem;
+  }
+
+  .section-subtitle {
+    margin-bottom: var(--space-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 15px;
+  }
+
+  .btn {
+    padding: 0.65rem 1.5rem;
+  }
+
+  .btn-lg {
+    padding: 0.85rem 2rem;
+    font-size: 0.85rem;
+  }
+}
