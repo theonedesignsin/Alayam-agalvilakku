@@ -53,7 +53,7 @@ write('/', page({
   description: 'Alayam Pooja Products, Virudhachalam – handmade agal vilakku, terracotta diya lamps and pooja items for Deepavali, Karthigai Deepam and gifting. Serving Cuddalore, Tamil Nadu and all India.',
   image: '/images/logo.webp',
   body: `<h1>Agal Vilakku &amp; Handmade Diya Lamps – Virudhachalam, Cuddalore</h1>${nav}
-  <p>Alayam Pooja Products (V Square Manufacturing Traders), Aladi Road, MRK Nagar, Virudhachalam, Cuddalore, Tamil Nadu 606001. Handmade terracotta agal vilakku, diya lamps and pooja products. Phone/WhatsApp +919365312227.</p><ul>${list}</ul>`,
+  <p>Alayam Pooja Products (V Square Manufacturing Traders), Aladi Road, MRK Nagar, Virudhachalam, Cuddalore, Tamil Nadu 606001. Handmade terracotta agal vilakku, diya lamps and pooja products. Phone/WhatsApp+91 9363512227.</p><ul>${list}</ul>`,
 }));
 
 write('/products', page({
